@@ -1,0 +1,171 @@
+/* Dark mode styles using Tailwind CSS v4 */
+:root {
+  --background: #ffffff;
+  --foreground: #111827;
+  --card: #ffffff;
+  --card-foreground: #111827;
+  --popover: #ffffff;
+  --popover-foreground: #111827;
+  --primary: #7c3aed;
+  --primary-foreground: #ffffff;
+  --secondary: #f3f4f6;
+  --secondary-foreground: #111827;
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+  --accent: #f3f4f6;
+  --accent-foreground: #111827;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #7c3aed;
+}
+
+:root.dark {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --card: #1e293b;
+  --card-foreground: #f1f5f9;
+  --popover: #1e293b;
+  --popover-foreground: #f1f5f9;
+  --primary: #8b5cf6;
+  --primary-foreground: #ffffff;
+  --secondary: #334155;
+  --secondary-foreground: #f1f5f9;
+  --muted: #334155;
+  --muted-foreground: #94a3b8;
+  --accent: #334155;
+  --accent-foreground: #f1f5f9;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: #334155;
+  --input: #334155;
+  --ring: #8b5cf6;
+}
+
+/* Apply theme variables */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode utilities */
+.dark body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* Component styles for dark mode */
+.dark .bg-white {
+  background-color: var(--card);
+}
+
+.dark .bg-gray-50 {
+  background-color: #1e293b;
+}
+
+.dark .bg-gray-100 {
+  background-color: #334155;
+}
+
+.dark .text-gray-900 {
+  color: var(--foreground);
+}
+
+.dark .text-gray-800 {
+  color: var(--foreground);
+}
+
+.dark .text-gray-700 {
+  color: var(--muted-foreground);
+}
+
+.dark .text-gray-600 {
+  color: var(--muted-foreground);
+}
+
+.dark .border-gray-200 {
+  border-color: var(--border);
+}
+
+.dark .border-gray-300 {
+  border-color: var(--border);
+}
+
+/* Form inputs dark mode */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: var(--input);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--muted-foreground);
+}
+
+/* Button dark mode */
+.dark .bg-purple-600 {
+  background-color: var(--primary);
+}
+
+.dark .bg-purple-600:hover {
+  background-color: #7c3aed;
+}
+
+.dark .text-purple-600 {
+  color: var(--primary);
+}
+
+/* Card styles */
+.dark .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+/* Scrollbar dark mode */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Chat dark mode */
+.dark .bg-gray-100 {
+  background-color: #334155;
+}
+
+.dark .bg-blue-100 {
+  background-color: #1e3a8a;
+}
+
+.dark .text-blue-800 {
+  color: #93c5fd;
+}
+
+/* Progress bars dark mode */
+.dark .bg-gray-200 {
+  background-color: #334155;
+}
+
+.dark .bg-green-500 {
+  background-color: #22c55e;
+}
+
+/* Modal dark mode */
+.dark .bg-black\/50 {
+  background-color: rgba(0, 0, 0, 0.7);
+}
