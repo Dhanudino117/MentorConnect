@@ -1,5 +1,12 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { getCurrentUser } from "../services/authService";
+import {
+  createSession,
+  getSessionsForUser,
+  updateSession,
+  deleteSession as removeSession,
+  addNotification,
+} from "../services/sessionService";
 import {
   FaCalendar,
   FaClock,
@@ -39,47 +46,33 @@ const Scheduler = () => {
   });
   const currentUser = getCurrentUser();
 
-  // Mock data for sessions
-  const [sessions, setSessions] = useState([
-    {
-      id: 1,
-      title: "React Fundamentals",
-      description: "Learning React basics and hooks",
-      startTime: new Date(Date.now() + 1000 * 60 * 60 * 24), // Tomorrow
-      endTime: new Date(Date.now() + 1000 * 60 * 60 * 24 + 1000 * 60 * 60), // +1 hour
-      duration: 60,
-      type: "one-on-one",
-      format: "video-call",
-      mentor: {
-        id: 2,
-        name: "Sarah Johnson",
-        avatar:
-          "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400",
-      },
-      student: currentUser,
-      status: "confirmed",
-      meetingLink: "https://meet.google.com/abc-defg-hij",
-    },
-    {
-      id: 2,
-      title: "Career Guidance Session",
-      description: "Discussing career goals and next steps",
-      startTime: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2), // Day after tomorrow
-      endTime: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2 + 1000 * 60 * 45), // +45 minutes
-      duration: 45,
-      type: "consultation",
-      format: "audio-call",
-      mentor: {
-        id: 3,
-        name: "Michael Chen",
-        avatar:
-          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
-      },
-      student: currentUser,
-      status: "scheduled",
-      meetingLink: "",
-    },
-  ]);
+  const [sessions, setSessions] = useState([]);
+
+  useEffect(() => {
+    if (!currentUser) return;
+    setSessions(
+      (getSessionsForUser(currentUser.id) || []).map((s) => ({
+        ...s,
+        startTime: new Date(s.startTime),
+        endTime: new Date(s.endTime),
+      }))
+    );
+    const handle = () => {
+      setSessions(
+        (getSessionsForUser(currentUser.id) || []).map((s) => ({
+          ...s,
+          startTime: new Date(s.startTime),
+          endTime: new Date(s.endTime),
+        }))
+      );
+    };
+    window.addEventListener("sessions_updated", handle);
+    const onStorage = (e) => {
+      if (e.key === "sessions") handle();
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("sessions_updated", handle);
+  }, [currentUser?.id]);
 
   // Mock available time slots
   const availableTimeSlots = [
@@ -110,33 +103,30 @@ const Scheduler = () => {
 
   const durationOptions = [15, 30, 45, 60, 90, 120];
 
-  // Mock mentors for booking
-  const availableMentors = [
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      expertise: ["React", "Node.js"],
-      rating: 4.8,
-      avatar:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400",
-    },
-    {
-      id: 2,
-      name: "Michael Chen",
-      expertise: ["Product Management", "Strategy"],
-      rating: 4.9,
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
-    },
-    {
-      id: 3,
-      name: "Emily Rodriguez",
-      expertise: ["UX Design", "UI Design"],
-      rating: 4.7,
-      avatar:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400",
-    },
-  ];
+  // Mentors directory from localStorage (fallback to a mock)
+  const availableMentors = useMemo(() => {
+    const dir = JSON.parse(localStorage.getItem("mentors") || "[]");
+    if (dir.length) {
+      return dir.map((m) => ({
+        id: m.userId,
+        name: m.name || m.email,
+        expertise: m.techStack || [],
+        rating: Math.round((Math.random() * 1.5 + 3.5) * 10) / 10,
+        avatar:
+          "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200",
+      }));
+    }
+    return [
+      {
+        id: 9999,
+        name: "Sample Mentor",
+        expertise: ["React", "Node.js"],
+        rating: 4.8,
+        avatar:
+          "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200",
+      },
+    ];
+  }, []);
 
   // Generate calendar days
   const generateCalendarDays = () => {
@@ -191,25 +181,40 @@ const Scheduler = () => {
   const handleBookingSubmit = (e) => {
     e.preventDefault();
 
-    const newSession = {
-      id: Date.now(),
+    const newSession = createSession({
       ...bookingForm,
       startTime: new Date(
         selectedDate.getTime() +
           new Date(`2000-01-01T${selectedTimeSlot.time}:00`).getTime()
-      ),
+      ).toISOString(),
       endTime: new Date(
         selectedDate.getTime() +
           new Date(`2000-01-01T${selectedTimeSlot.time}:00`).getTime() +
           bookingForm.duration * 60 * 1000
-      ),
+      ).toISOString(),
       mentor: availableMentors.find((m) => m.id === bookingForm.mentorId),
       student: currentUser,
-      status: "scheduled",
+      status: "pending",
       meetingLink: "",
-    };
-
-    setSessions((prev) => [...prev, newSession]);
+    });
+    if (newSession?.mentor?.id) {
+      addNotification(newSession.mentor.id, {
+        type: "session_request",
+        title: "New session request",
+        message: `${currentUser?.name || currentUser?.email} requested "${
+          newSession.title
+        }"`,
+        sessionId: newSession.id,
+      });
+    }
+    setSessions((prev) => [
+      ...prev,
+      {
+        ...newSession,
+        startTime: new Date(newSession.startTime),
+        endTime: new Date(newSession.endTime),
+      },
+    ]);
     setShowBookingModal(false);
     setBookingForm({
       title: "",
@@ -231,11 +236,14 @@ const Scheduler = () => {
 
   // Handle session deletion
   const handleDeleteSession = (sessionId) => {
+    removeSession(sessionId);
     setSessions((prev) => prev.filter((s) => s.id !== sessionId));
   };
 
   // Handle session status change
   const handleStatusChange = (sessionId, newStatus) => {
+    const updated = updateSession(sessionId, { status: newStatus });
+    if (!updated) return;
     setSessions((prev) =>
       prev.map((s) => (s.id === sessionId ? { ...s, status: newStatus } : s))
     );

@@ -31,13 +31,23 @@ const Nav = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const authenticatedNavItems = [
-    { path: "/dashboard", label: "Dashboard" },
-    { path: "/profile", label: "Profile" },
-    { path: "/mentors", label: "Find Mentors" },
-    { path: "/messages", label: "Messages" },
-    { path: "/schedule", label: "Schedule" },
-  ];
+  const authenticatedNavItems = () => {
+    if (currentUser?.role === "mentor") {
+      return [
+        { path: "/mentor/dashboard", label: "Dashboard" },
+        { path: "/mentor/profile", label: "Mentor Profile" },
+        { path: "/messages", label: "Messages" },
+        { path: "/schedule", label: "Schedule" },
+      ];
+    }
+    return [
+      { path: "/dashboard", label: "Dashboard" },
+      { path: "/profile", label: "Profile" },
+      { path: "/mentors", label: "Find Mentors" },
+      { path: "/messages", label: "Messages" },
+      { path: "/schedule", label: "Schedule" },
+    ];
+  };
 
   const publicNavItems = [
     { path: "/dashboard", label: "Dashboard" },
@@ -46,7 +56,7 @@ const Nav = () => {
     { path: "/contact", label: "Contact" },
   ];
 
-  const navItems = isLoggedIn ? authenticatedNavItems : publicNavItems;
+  const navItems = isLoggedIn ? authenticatedNavItems() : publicNavItems;
 
   return (
     <nav className="bg-white dark:bg-slate-100 shadow-lg transition-colors duration-300">
@@ -130,11 +140,11 @@ const Nav = () => {
                 {isProfileDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                     <NavLink
-                      to="/profile"
+                      to={currentUser?.role === "mentor" ? "/mentor/profile" : "/profile"}
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => setIsProfileDropdownOpen(false)}
                     >
-                      My Profile
+                      {currentUser?.role === "mentor" ? "Mentor Profile" : "My Profile"}
                     </NavLink>
                     <NavLink
                       to="/settings"

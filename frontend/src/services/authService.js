@@ -1,27 +1,27 @@
 // Mock authentication service for demo purposes
-const STORAGE_KEY = 'mentorconnect_user';
+const STORAGE_KEY = "mentorconnect_user";
 
 export const registerUser = async (userData) => {
   // Simulate API call
   return new Promise((resolve) => {
     setTimeout(() => {
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const existingUser = users.find(u => u.email === userData.email);
-      
+      const users = JSON.parse(localStorage.getItem("users") || "[]");
+      const existingUser = users.find((u) => u.email === userData.email);
+
       if (existingUser) {
-        throw new Error('User already exists');
+        throw new Error("User already exists");
       }
-      
+
       const newUser = {
         id: Date.now(),
         name: userData.name,
         email: userData.email,
-        role: 'student', // Default role
-        createdAt: new Date().toISOString()
+        role: userData.role ?? "unassigned", // Confirmed on role select page
+        createdAt: new Date().toISOString(),
       };
-      
+
       users.push(newUser);
-      localStorage.setItem('users', JSON.stringify(users));
+      localStorage.setItem("users", JSON.stringify(users));
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
       resolve(newUser);
     }, 500);
@@ -31,17 +31,16 @@ export const registerUser = async (userData) => {
 export const loginUser = async (credentials) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const user = users.find(u => 
-        u.email === credentials.email && 
-        u.email === credentials.email // In real app, compare hashed passwords
+      const users = JSON.parse(localStorage.getItem("users") || "[]");
+      const user = users.find(
+        (u) => u.email === credentials.email && u.email === credentials.email // In real app, compare hashed passwords
       );
-      
+
       if (!user) {
-        reject(new Error('Invalid credentials'));
+        reject(new Error("Invalid credentials"));
         return;
       }
-      
+
       localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
       resolve(user);
     }, 500);
@@ -59,4 +58,30 @@ export const getCurrentUser = () => {
 
 export const isAuthenticated = () => {
   return !!getCurrentUser();
+};
+
+// Update helpers
+export const updateCurrentUser = (updates) => {
+  const current = getCurrentUser();
+  if (!current) return null;
+
+  const updatedUser = { ...current, ...updates };
+
+  // Update users list
+  const users = JSON.parse(localStorage.getItem("users") || "[]");
+  const updatedUsers = users.map((u) =>
+    u.id === updatedUser.id ? { ...u, ...updates } : u
+  );
+  localStorage.setItem("users", JSON.stringify(updatedUsers));
+
+  // Update current session
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
+  return updatedUser;
+};
+
+export const setUserRole = (role) => {
+  if (role !== "student" && role !== "mentor" && role !== "admin") {
+    throw new Error("Invalid role");
+  }
+  return updateCurrentUser({ role });
 };

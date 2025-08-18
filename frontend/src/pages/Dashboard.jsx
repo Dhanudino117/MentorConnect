@@ -78,7 +78,7 @@ const Dashboard = () => {
         );
 
       case "mentors":
-        return <SwipeDesk />;
+        return <SwipeDesk userType="student" />;
 
       case "schedule":
         return <Scheduler />;

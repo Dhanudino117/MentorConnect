@@ -10,10 +10,13 @@ const tabs = [
 
 const AuthPage = () => {
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get("redirect") || "/dashboard";
+  const redirectTo = searchParams.get("redirect") || "/select-role";
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState("login");
+  const [activeTab, setActiveTab] = useState(() => {
+    const initial = new URLSearchParams(window.location.search).get("tab");
+    return initial === "signup" ? "signup" : "login";
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
