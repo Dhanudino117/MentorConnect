@@ -113,9 +113,17 @@ const Nav = () => {
                   className="flex items-center space-x-2 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
                 >
                   <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
-                    {currentUser.name
-                      ? currentUser.name.charAt(0).toUpperCase()
-                      : "U"}
+                    {currentUser.profileImage ? (
+                      <img
+                        src={currentUser.profileImage}
+                        alt={currentUser.name || currentUser.email}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                    ) : (
+                      currentUser.name
+                        ? currentUser.name.charAt(0).toUpperCase()
+                        : "U"
+                    )}
                   </div>
                   <span className="text-gray-700">
                     {currentUser.name || currentUser.email}
@@ -261,9 +269,17 @@ const Nav = () => {
                 <div className="px-3 py-2">
                   <div className="flex items-center">
                     <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
-                      {currentUser.name
-                        ? currentUser.name.charAt(0).toUpperCase()
-                        : "U"}
+                      {currentUser.profileImage ? (
+                        <img
+                          src={currentUser.profileImage}
+                          alt={currentUser.name || currentUser.email}
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+                      ) : (
+                        currentUser.name
+                          ? currentUser.name.charAt(0).toUpperCase()
+                          : "U"
+                      )}
                     </div>
                     <span className="ml-3 text-gray-700">
                       {currentUser.name || currentUser.email}

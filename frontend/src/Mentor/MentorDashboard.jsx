@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Nav from "../components/Nav";
-import { getCurrentUser } from "../services/authService";
+import { getCurrentUser, updateProfileImage } from "../services/authService";
 import {
   getSessionsForUser,
   updateSession,
@@ -16,6 +16,7 @@ const MentorDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [sessions, setSessions] = useState([]);
   const [notifications, setNotifications] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -341,6 +342,90 @@ const MentorDashboard = () => {
       case "profile":
         return (
           <div className="space-y-6">
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h3 className="text-lg font-semibold mb-4">Profile Image</h3>
+              <div className="flex items-center space-x-6">
+                <div className="relative">
+                  <div className="w-24 h-24 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg overflow-hidden">
+                    {mentor.profileImage ? (
+                      <img
+                        src={mentor.profileImage}
+                        alt={user?.name || "Profile"}
+                        className="w-24 h-24 rounded-full object-cover"
+                      />
+                    ) : (
+                      user?.name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || "M"
+                    )}
+                  </div>
+                  {mentor.profileImage && (
+                    <button
+                      onClick={() => {
+                        if (confirm("Remove profile image?")) {
+                          updateProfileImage(null);
+                          window.location.reload();
+                        }
+                      }}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
+                      title="Remove image"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Upload Profile Image
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      disabled={isUploading}
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          if (file.size > 5 * 1024 * 1024) {
+                            alert("File size must be less than 5MB");
+                            return;
+                          }
+                          
+                          setIsUploading(true);
+                          const reader = new FileReader();
+                          reader.onload = (event) => {
+                            const imageUrl = event.target.result;
+                            // Update user profile image
+                            const result = updateProfileImage(imageUrl);
+                            if (result) {
+                              // Success - force re-render
+                              window.location.reload();
+                            } else {
+                              alert("Failed to update profile image. Please try again.");
+                              setIsUploading(false);
+                            }
+                          };
+                          reader.onerror = () => {
+                            alert("Error reading file. Please try again.");
+                            setIsUploading(false);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                    {isUploading && (
+                      <div className="mt-2 flex items-center text-sm text-purple-600">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600 mr-2"></div>
+                        Uploading...
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-500">
+                    Recommended: Square image, 400x400 pixels or larger. Max size: 5MB.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
             <div className="bg-white p-6 rounded-lg shadow">
               <h3 className="text-lg font-semibold mb-2">About You</h3>
               <p className="text-gray-700 whitespace-pre-line">
