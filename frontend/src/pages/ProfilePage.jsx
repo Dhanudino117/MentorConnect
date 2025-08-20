@@ -24,12 +24,13 @@ import {
   FaEye,
   FaEyeSlash,
   } from "react-icons/fa";
-import { getCurrentUser } from "../services/authService";
+import { getCurrentUser, updateProfileImage } from "../services/authService";
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   // Get current user or use default guest data
   const currentUser = useMemo(
@@ -203,14 +204,53 @@ const ProfilePage = () => {
         <div className="flex items-start justify-between mb-6">
           <div className="flex items-center space-x-6">
             <div className="relative">
-              <img
-                src={userData.avatar}
-                alt={userData.name}
-                className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
-              />
-              <button className="absolute bottom-0 right-0 bg-purple-600 text-white p-2 rounded-full hover:bg-purple-700 transition-colors">
-                <FaCamera size={16} />
-              </button>
+              <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center text-white text-3xl font-bold">
+                {currentUser?.profileImage ? (
+                  <img
+                    src={currentUser.profileImage}
+                    alt={userData.name}
+                    className="w-24 h-24 object-cover"
+                  />
+                ) : (
+                  (userData.name || userData.email)?.charAt(0).toUpperCase()
+                )}
+              </div>
+              {currentUser && (
+                <label className="absolute bottom-0 right-0 bg-purple-600 text-white p-2 rounded-full hover:bg-purple-700 transition-colors cursor-pointer">
+                  <FaCamera size={16} />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    disabled={isUploading}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      if (file.size > 5 * 1024 * 1024) {
+                        alert("File size must be less than 5MB");
+                        return;
+                      }
+                      setIsUploading(true);
+                      const reader = new FileReader();
+                      reader.onload = (event) => {
+                        const imageUrl = event.target?.result;
+                        const result = updateProfileImage(String(imageUrl));
+                        if (result) {
+                          window.location.reload();
+                        } else {
+                          alert("Failed to update profile image. Please try again.");
+                          setIsUploading(false);
+                        }
+                      };
+                      reader.onerror = () => {
+                        alert("Error reading file. Please try again.");
+                        setIsUploading(false);
+                      };
+                      reader.readAsDataURL(file);
+                    }}
+                  />
+                </label>
+              )}
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-800">
@@ -222,6 +262,25 @@ const ProfilePage = () => {
               <p className="text-sm text-gray-500">
                 Member since {new Date(userData.joinDate).toLocaleDateString()}
               </p>
+              {currentUser?.profileImage && (
+                <button
+                  onClick={() => {
+                    if (confirm("Remove profile image?")) {
+                      updateProfileImage(null);
+                      window.location.reload();
+                    }
+                  }}
+                  className="mt-3 text-sm text-red-600 hover:text-red-700"
+                >
+                  Remove photo
+                </button>
+              )}
+              {isUploading && (
+                <div className="mt-2 flex items-center text-sm text-purple-600">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600 mr-2"></div>
+                  Uploading...
+                </div>
+              )}
             </div>
           </div>
           <div className="flex space-x-3">
@@ -400,7 +459,7 @@ const ProfilePage = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text sm font-medium text-gray-700 mb-2">
               GitHub
             </label>
             {isEditing ? (
@@ -638,7 +697,7 @@ const ProfilePage = () => {
                   </p>
                 </div>
               </div>
-              <select className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+              <select className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus;border-transparent">
                 <option>English</option>
                 <option>Spanish</option>
                 <option>French</option>

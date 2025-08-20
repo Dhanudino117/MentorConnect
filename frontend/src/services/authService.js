@@ -85,3 +85,32 @@ export const setUserRole = (role) => {
   }
   return updateCurrentUser({ role });
 };
+
+export const updateProfileImage = (imageUrl) => {
+  const current = getCurrentUser();
+  if (!current) return null;
+
+  // Validate image URL
+  if (imageUrl && !imageUrl.startsWith('data:image/')) {
+    console.error('Invalid image format. Expected data URL.');
+    return null;
+  }
+
+  const updatedUser = { ...current, profileImage: imageUrl };
+
+  try {
+    // Update users list
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    const updatedUsers = users.map((u) =>
+      u.id === updatedUser.id ? updatedUser : u
+    );
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
+
+    // Update current session
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
+    return updatedUser;
+  } catch (error) {
+    console.error('Error updating profile image:', error);
+    return null;
+  }
+};

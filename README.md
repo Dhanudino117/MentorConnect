@@ -1,60 +1,86 @@
 # MentorConnect
 
+A modern mentorship platform that connects students with experienced mentors through an intuitive interface.
 
-MentorConnect is a MERN-stack web app that helps students, early-career professionals, and entrepreneurs find the right mentor.
-Instead of long boring search forms, students can browse potential mentors Tinder-style — swiping right to “connect” and left to “skip”.
+## New Features
 
-Mentors can also filter and view students who fit their expertise. Once a match occurs, the platform unlocks chat, scheduling, and progress tracking features.
+### Profile Image Management
 
-This app solves key problems:
+#### Landing Page Profile Display
+- After login, the landing page displays the user's profile photo instead of the login button
+- Clicking on the profile image opens a dropdown menu with:
+  - User's name and email
+  - Dashboard navigation
+  - Profile settings
+  - Logout option
+- The dropdown includes smooth animations and backdrop blur effects
+- Click outside or press Escape to close the dropdown
 
-Limited access to experienced professionals.
+#### Profile Image Upload
+- **Mentor Dashboard**: Profile tab includes an image upload section
+- **Student Dashboard**: Overview tab includes an image upload section
+- Features:
+  - Drag and drop file input
+  - Image preview with current profile image
+  - File size validation (max 5MB)
+  - Loading states during upload
+  - Remove image functionality
+  - Automatic fallback to initials if no image is set
 
-No skill/goals-based matching.
+#### Navigation Integration
+- Profile images are displayed throughout the navigation system
+- Consistent styling across all components
+- Responsive design for mobile and desktop
 
-Time zone conflicts with a scheduling assistant.
+## Technical Implementation
 
-Unclear communication channels → Built-in chat/video calls.
+### Components Updated
+- `LandingPage.jsx` - Added profile display and dropdown
+- `Nav.jsx` - Integrated profile images in navigation
+- `MentorDashboard.jsx` - Added image upload section
+- `Dashboard.jsx` - Added image upload section for students
+- `authService.js` - Added profile image management functions
 
-No structured progress tracking → Dashboard with milestones, goals, and feedback.
+### Key Features
+- **Image Storage**: Uses base64 data URLs stored in localStorage
+- **Validation**: File type and size validation
+- **Error Handling**: Comprehensive error handling for upload failures
+- **State Management**: Loading states and user feedback
+- **Responsive Design**: Works on all screen sizes
 
-Core Features:
-1. Mentor–Mentee Matching (Swipe Interface)
-Students see mentor profiles as swipeable cards (name, skills, bio, experience, rating).
+### Usage
 
-Swipe Right → Send request to connect.
+1. **Upload Profile Image**:
+   - Navigate to your dashboard (Mentor or Student)
+   - Find the Profile Image section
+   - Click "Choose File" and select an image
+   - Image will be automatically uploaded and displayed
 
-Swipe Left → Skip and move to next mentor.
+2. **Remove Profile Image**:
+   - Click the red "×" button on your profile image
+   - Confirm the removal
+   - Profile will revert to showing your initials
 
-Matching occurs when both swipe right.
+3. **Profile Dropdown**:
+   - Click on your profile image in the header
+   - Use the dropdown menu to navigate or logout
+   - Click outside or press Escape to close
 
-2. Profiles & Authentication
-Students: name, email, skills they want to learn, goals, profile photo.
+## File Structure
 
-Mentors: name, email, expertise, experience, availability, profile photo.
+```
 
-JWT Authentication for secure login/signup.
+## Browser Compatibility
 
-Role-based access (Student/Mentor/Admin).
+- Modern browsers with ES6+ support
+- FileReader API for image processing
+- LocalStorage for data persistence
+- CSS Grid and Flexbox for layout
 
-3. Scheduling & Time Zone Support
-Integrate a time-zone-aware calendar picker.
+## Future Enhancements
 
-Show available time slots in both mentor’s and mentee’s local time.
-
-4. Communication Tools
-Real-time chat (Socket.io + MongoDB for persistence).
-
-Optional video call integration (WebRTC or third-party like Twilio API).
-
-5. Learning Progress Tracker
-Create mentorship goals & milestones.
-
-Weekly progress reports (completed tasks, mentor feedback).
-
-6. Admin Panel
-View all users & matches.
-
-Remove inappropriate accounts.
-
-## DeploymentLink : https://mentor-connect-xi.vercel.app/
+- Cloud storage integration for images
+- Image compression and optimization
+- Multiple image formats support
+- Profile image cropping tools
+- Social media integration
