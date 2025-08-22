@@ -2,6 +2,14 @@
 @import "./styles/darkmode.css";
 
 
-*{
-    scroll-behavior: smooth;
+
+html {
+  scroll-behavior: smooth;
+  transition: all;
+  transition-duration: 300ms;
+}
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #f0f2f5;
+  color: #333;
 }
