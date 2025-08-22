@@ -1,8 +1,8 @@
 import express from "express";
+import authRoutes from "./auth.js";
+
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.json({ msg: "Mentor API works" });
-});
+router.use("/auth", authRoutes);
 
 export default router;
