@@ -1,89 +1,67 @@
-// Mock authentication service for demo purposes
+// src/services/authService.js
+import api from "./api";
+
 const STORAGE_KEY = "mentorconnect_user";
 
+// ✅ Register user (Student / Mentor / Admin)
 export const registerUser = async (userData) => {
-  // Simulate API call
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-      const existingUser = users.find((u) => u.email === userData.email);
-
-      if (existingUser) {
-        throw new Error("User already exists");
-      }
-
-      const newUser = {
-        id: Date.now(),
-        name: userData.name,
-        email: userData.email,
-        role: userData.role ?? "unassigned", // Confirmed on role select page
-        createdAt: new Date().toISOString(),
-      };
-
-      users.push(newUser);
-      localStorage.setItem("users", JSON.stringify(users));
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser));
-      resolve(newUser);
-    }, 500);
-  });
+  const res = await api.post("/student/register", userData);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(res.data.user));
+  localStorage.setItem("token", res.data.token); // Save JWT
+  return res.data.user;
 };
 
+// ✅ Login user
 export const loginUser = async (credentials) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-      const user = users.find(
-        (u) => u.email === credentials.email && u.email === credentials.email // In real app, compare hashed passwords
-      );
-
-      if (!user) {
-        reject(new Error("Invalid credentials"));
-        return;
-      }
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-      resolve(user);
-    }, 500);
-  });
+  const res = await api.post("/student/login", credentials);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(res.data.user));
+  localStorage.setItem("token", res.data.token); // Save JWT
+  return res.data.user;
 };
 
+// ✅ Logout
 export const logout = () => {
   localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem("token");
 };
 
+// ✅ Get currently logged-in user (from localStorage)
 export const getCurrentUser = () => {
   const userStr = localStorage.getItem(STORAGE_KEY);
   return userStr ? JSON.parse(userStr) : null;
 };
 
+// ✅ Check authentication
 export const isAuthenticated = () => {
   return !!getCurrentUser();
 };
 
-// Update helpers
-export const updateCurrentUser = (updates) => {
+// ✅ Update user details
+export const updateCurrentUser = async (updates) => {
   const current = getCurrentUser();
   if (!current) return null;
 
-  const updatedUser = { ...current, ...updates };
+  const res = await api.put(`/student/${current.id}`, updates);
+  const updatedUser = res.data;
 
-  // Update users list
-  const users = JSON.parse(localStorage.getItem("users") || "[]");
-  const updatedUsers = users.map((u) =>
-    u.id === updatedUser.id ? { ...u, ...updates } : u
-  );
-  localStorage.setItem("users", JSON.stringify(updatedUsers));
-
-  // Update current session
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
   return updatedUser;
 };
 
-export const setUserRole = (role) => {
-  if (role !== "student" && role !== "mentor" && role !== "admin") {
+// ✅ Set role (student, mentor, admin)
+export const setUserRole = async (role) => {
+  if (!["student", "mentor", "admin"].includes(role)) {
     throw new Error("Invalid role");
   }
-  return updateCurrentUser({ role });
+
+  const current = getCurrentUser();
+  if (!current) return null;
+
+  const res = await api.put(`/student/${current.id}/role`, { role });
+  const updatedUser = res.data;
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
+  return updatedUser;
 };
 
 export const updateProfileImage = (imageUrl) => {
