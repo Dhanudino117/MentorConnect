@@ -114,4 +114,4 @@ The frontend will start on `http://localhost:5173`
 
 ## License
 
-ISC License
+MIT License

@@ -6,6 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import ProfilePage from "./pages/ProfilePage";
@@ -14,7 +15,7 @@ import MentorOnboarding from "./Mentor/MentorOnboarding";
 import MentorDashboard from "./Mentor/MentorDashboard";
 import MentorProfile from "./Mentor/MentorProfile";
 import ConnectionTest from "./components/ConnectionTest";
-import { ThemeProvider } from "./contexts/ThemeContext";
+
 
 function App() {
   return (

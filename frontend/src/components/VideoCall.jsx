@@ -33,6 +33,7 @@ const VideoCall = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const intervalRef = useRef(null);
+  // Duration of the call
   const currentUser = {
     id: 1,
     name: "You",
@@ -40,7 +41,7 @@ const VideoCall = () => {
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
   };
 
-  // Mock participants data
+  // Mock participants data (for testing)
   const mockParticipants = useMemo(
     () => [
       {
@@ -80,7 +81,7 @@ const VideoCall = () => {
     []
   );
 
-  // Mock chat messages
+  // Mock chat messages (for testing)           
   const mockChatMessages = useMemo(
     () => [
       {
