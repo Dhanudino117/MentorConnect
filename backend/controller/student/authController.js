@@ -1,9 +1,10 @@
 import jwt from "jsonwebtoken";
 import User from "../../models/user.js";
+import { CONFIG } from "../../config.js";
 
 // Generate JWT
 const generateToken = (id, role) => {
-  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
+  return jwt.sign({ id, role }, CONFIG.JWT_SECRET, {
     expiresIn: "30d",
   });
 };

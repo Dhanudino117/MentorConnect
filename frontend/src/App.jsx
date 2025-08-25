@@ -6,6 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import ProfilePage from "./pages/ProfilePage";
@@ -13,7 +14,8 @@ import RoleSelect from "./pages/RoleSelect";
 import MentorOnboarding from "./Mentor/MentorOnboarding";
 import MentorDashboard from "./Mentor/MentorDashboard";
 import MentorProfile from "./Mentor/MentorProfile";
-import { ThemeProvider } from "./contexts/ThemeContext";
+import ConnectionTest from "./components/ConnectionTest";
+
 
 function App() {
   return (
@@ -28,6 +30,7 @@ function App() {
           <Route path="/mentor/profile" element={<MentorProfile />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/test-connection" element={<ConnectionTest />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>

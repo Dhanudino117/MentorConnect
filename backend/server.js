@@ -1,10 +1,9 @@
 // server.js
 import express from "express";
+import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
-
-// Load environment variables
-dotenv.config();
+import { CONFIG } from "./config.js";
 
 const app = express();
 
@@ -13,6 +12,12 @@ app.use(cors());
 app.use(express.json());
 
 // Database Connection
+
+mongoose
+  .connect(CONFIG.MONGO_URI)
+  .then(() => console.log("✅ MongoDB connected successfully"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
+
 import connectDB from "./config/db.js";
 connectDB();
 
@@ -43,7 +48,6 @@ app.use((err, req, res, next) => {
 });
 
 // Start Server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
+app.listen(CONFIG.PORT, () => {
+  console.log(`✅ Server running on port ${CONFIG.PORT}`);
 });
