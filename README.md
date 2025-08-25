@@ -1,86 +1,117 @@
 # MentorConnect
 
-A modern mentorship platform that connects students with experienced mentors through an intuitive interface.
+A platform connecting students with mentors for learning and guidance.
 
-## New Features
+## Features
 
-### Profile Image Management
+- **User Authentication**: Student and Mentor registration/login
+- **Profile Management**: Update and manage user profiles
+- **Role-based Access**: Different interfaces for students and mentors
+- **Real-time Communication**: Chat and video call capabilities
+- **Matching System**: Connect students with suitable mentors
 
-#### Landing Page Profile Display
-- After login, the landing page displays the user's profile photo instead of the login button
-- Clicking on the profile image opens a dropdown menu with:
-  - User's name and email
-  - Dashboard navigation
-  - Profile settings
-  - Logout option
-- The dropdown includes smooth animations and backdrop blur effects
-- Click outside or press Escape to close the dropdown
-
-#### Profile Image Upload
-- **Mentor Dashboard**: Profile tab includes an image upload section
-- **Student Dashboard**: Overview tab includes an image upload section
-- Features:
-  - Drag and drop file input
-  - Image preview with current profile image
-  - File size validation (max 5MB)
-  - Loading states during upload
-  - Remove image functionality
-  - Automatic fallback to initials if no image is set
-
-#### Navigation Integration
-- Profile images are displayed throughout the navigation system
-- Consistent styling across all components
-- Responsive design for mobile and desktop
-
-## Technical Implementation
-
-### Components Updated
-- `LandingPage.jsx` - Added profile display and dropdown
-- `Nav.jsx` - Integrated profile images in navigation
-- `MentorDashboard.jsx` - Added image upload section
-- `Dashboard.jsx` - Added image upload section for students
-- `authService.js` - Added profile image management functions
-
-### Key Features
-- **Image Storage**: Uses base64 data URLs stored in localStorage
-- **Validation**: File type and size validation
-- **Error Handling**: Comprehensive error handling for upload failures
-- **State Management**: Loading states and user feedback
-- **Responsive Design**: Works on all screen sizes
-
-### Usage
-
-1. **Upload Profile Image**:
-   - Navigate to your dashboard (Mentor or Student)
-   - Find the Profile Image section
-   - Click "Choose File" and select an image
-   - Image will be automatically uploaded and displayed
-
-2. **Remove Profile Image**:
-   - Click the red "×" button on your profile image
-   - Confirm the removal
-   - Profile will revert to showing your initials
-
-3. **Profile Dropdown**:
-   - Click on your profile image in the header
-   - Use the dropdown menu to navigate or logout
-   - Click outside or press Escape to close
-
-## File Structure
+## Project Structure
 
 ```
+MentorConnect/
+├── backend/          # Node.js + Express + MongoDB backend
+├── frontend/         # React + Vite frontend
+└── README.md
+```
 
-## Browser Compatibility
+## Backend Configuration
 
-- Modern browsers with ES6+ support
-- FileReader API for image processing
-- LocalStorage for data persistence
-- CSS Grid and Flexbox for layout
+The backend is configured to run without environment variables. Configuration is stored in `backend/server.js`:
 
-## Future Enhancements
+- **MongoDB URI**: `mongodb://localhost:27017/mentorconnect`
+- **JWT Secret**: `mentorconnect_jwt_secret_key_2024`
+- **Port**: `5000`
 
-- Cloud storage integration for images
-- Image compression and optimization
-- Multiple image formats support
-- Profile image cropping tools
-- Social media integration
+## Setup Instructions
+
+### Prerequisites
+
+- Node.js (v16 or higher)
+- MongoDB (running locally or accessible)
+
+### Backend Setup
+
+1. Navigate to the backend directory:
+   ```bash
+   cd MentorConnect/backend
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+The backend will start on `http://localhost:5000`
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+   ```bash
+   cd MentorConnect/frontend
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+The frontend will start on `http://localhost:5173`
+
+## API Endpoints
+
+### Authentication
+- `POST /api/student/auth/register` - Student registration
+- `POST /api/student/auth/login` - Student login
+- `POST /api/mentor/auth/register` - Mentor registration
+- `POST /api/mentor/auth/login` - Mentor login
+
+### Profile Management
+- `GET /api/student/profile` - Get student profile
+- `PUT /api/student/profile` - Update student profile
+- `GET /api/mentor/profile` - Get mentor profile
+- `PUT /api/mentor/profile` - Update mentor profile
+
+## Data Storage
+
+- **User Data**: Stored in MongoDB with encrypted passwords
+- **Authentication**: JWT tokens for session management
+- **Frontend State**: User session data stored in localStorage
+
+## Security Features
+
+- Password hashing with bcrypt
+- JWT token authentication
+- Role-based access control
+- Input validation and sanitization
+
+## Development Notes
+
+- The backend runs without environment variables for simplicity
+- All configuration is centralized in `backend/server.js`
+- Frontend makes real API calls to the backend
+- CORS is enabled for local development
+
+## Troubleshooting
+
+1. **MongoDB Connection Error**: Ensure MongoDB is running locally
+2. **Port Already in Use**: Change the port in `backend/server.js`
+3. **CORS Issues**: Check that the frontend URL is allowed in CORS settings
+
+## License
+
+ISC License

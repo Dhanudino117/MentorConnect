@@ -1,36 +1,16 @@
 import express from "express";
-import User from "../../models/user.js";
+import { protect } from "../../middleware/auth.js";
+import { getStudentProfile, updateStudentProfile } from "../../controller/student/profileController.js";
 
 const router = express.Router();
 
+// Protected routes - require authentication
+router.use(protect);
+
 // Get student profile
-router.get("/:id", async (req, res) => {
-  try {
-    const student = await User.findById(req.params.id);
-    if (!student || student.role !== "student") {
-      return res.status(404).json({ message: "Student not found" });
-    }
-    res.json(student);
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
-});
+router.get("/", getStudentProfile);
 
 // Update student profile
-router.put("/:id", async (req, res) => {
-  try {
-    const student = await User.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
-    if (!student || student.role !== "student") {
-      return res.status(404).json({ message: "Student not found" });
-    }
-    res.json(student);
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
-});
+router.put("/", updateStudentProfile);
 
 export default router;

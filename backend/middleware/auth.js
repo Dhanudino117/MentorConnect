@@ -1,6 +1,7 @@
 // backend/middleware/auth.js
 import jwt from "jsonwebtoken";
 import User from "../models/user.js";
+import { CONFIG } from "../config.js";
 
 export const auth = async (req, res, next) => {
   try {
@@ -9,7 +10,7 @@ export const auth = async (req, res, next) => {
       return res.status(401).json({ message: "No token provided" });
 
     const token = header.replace("Bearer ", "");
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const payload = jwt.verify(token, CONFIG.JWT_SECRET);
     const user = await User.findById(payload.id);
     if (!user) return res.status(401).json({ message: "Invalid token user" });
 
@@ -19,3 +20,6 @@ export const auth = async (req, res, next) => {
     return res.status(401).json({ message: "Invalid/expired token" });
   }
 };
+
+// Export as protect for consistency with route usage
+export const protect = auth;

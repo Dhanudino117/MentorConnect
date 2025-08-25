@@ -1,36 +1,16 @@
 import express from "express";
-import User from "../../models/user.js";
+import { protect } from "../../middleware/auth.js";
+import { getMentorProfile, updateMentorProfile } from "../../controller/mentor/profileController.js";
 
 const router = express.Router();
 
+// Protected routes - require authentication
+router.use(protect);
+
 // Get mentor profile
-router.get("/:id", async (req, res) => {
-  try {
-    const mentor = await User.findById(req.params.id);
-    if (!mentor || mentor.role !== "mentor") {
-      return res.status(404).json({ message: "Mentor not found" });
-    }
-    res.json(mentor);
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
-});
+router.get("/", getMentorProfile);
 
 // Update mentor profile
-router.put("/:id", async (req, res) => {
-  try {
-    const mentor = await User.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
-    if (!mentor || mentor.role !== "mentor") {
-      return res.status(404).json({ message: "Mentor not found" });
-    }
-    res.json(mentor);
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
-});
+router.put("/", updateMentorProfile);
 
 export default router;

@@ -1,10 +1,11 @@
 import express from "express";
+import { protect } from "../../middleware/auth.js";
 import {
-  acceptStudent,
-  rejectStudent,
-  getInterestedStudents,
   getMatches,
-} from "../../controllers/mentor/matchController.js";
+  createMatch,
+  updateMatch,
+  deleteMatch,
+} from "../../controller/mentor/matchController.js";
 
 const router = express.Router();
 

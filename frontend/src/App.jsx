@@ -13,6 +13,7 @@ import RoleSelect from "./pages/RoleSelect";
 import MentorOnboarding from "./Mentor/MentorOnboarding";
 import MentorDashboard from "./Mentor/MentorDashboard";
 import MentorProfile from "./Mentor/MentorProfile";
+import ConnectionTest from "./components/ConnectionTest";
 import { ThemeProvider } from "./contexts/ThemeContext";
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
           <Route path="/mentor/profile" element={<MentorProfile />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/test-connection" element={<ConnectionTest />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>

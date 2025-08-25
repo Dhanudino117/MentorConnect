@@ -1,5 +1,5 @@
 import express from "express";
-import { swipeRight, swipeLeft, getMatches } from "../../controllers/student/swipeController.js";
+import { swipeRight, swipeLeft, getMatches } from "../../controller/student/swipeController.js";
 
 const router = express.Router();
 
