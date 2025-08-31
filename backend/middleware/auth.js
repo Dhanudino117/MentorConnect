@@ -6,17 +6,10 @@ import { CONFIG } from "../config.js";
 export const authMiddleware = async (req, res, next) => {
   let token;
 
-
-    const token = header.replace("Bearer ", "");
-    const payload = jwt.verify(token, CONFIG.JWT_SECRET);
-    const user = await User.findById(payload.id);
-    if (!user) return res.status(401).json({ message: "Invalid token user" });
-
   if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
     try {
       token = req.headers.authorization.split(" ")[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
+      const decoded = jwt.verify(token, CONFIG.JWT_SECRET);
 
       req.user = await User.findById(decoded.id).select("-password");
       if (!req.user) {
@@ -33,4 +26,4 @@ export const authMiddleware = async (req, res, next) => {
 };
 
 // Export as protect for consistency with route usage
-export const protect = auth;
+export const protect = authMiddleware;

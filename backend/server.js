@@ -1,14 +1,18 @@
 // server.js
 import express from "express";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
 import cors from "cors";
 import { CONFIG } from "./config.js";
 
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // Database Connection
@@ -17,9 +21,6 @@ mongoose
   .connect(CONFIG.MONGO_URI)
   .then(() => console.log("✅ MongoDB connected successfully"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
-
-import connectDB from "./config/db.js";
-connectDB();
 
 // Import Routes
 import studentRoutes from "./routes/student/index.js";

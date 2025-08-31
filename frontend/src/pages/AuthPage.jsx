@@ -24,7 +24,6 @@ const AuthPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("student"); // Default role
 
   const isLogin = useMemo(() => activeTab === "login", [activeTab]);
 
@@ -33,7 +32,6 @@ const AuthPage = () => {
   const validate = () => {
     if (!email || !password) return "Email and password are required.";
     if (!isLogin && !name) return "Name is required for signup.";
-    if (!isLogin && !role) return "Please select a role.";
     const emailOk = /\S+@\S+\.\S+/.test(email);
     if (!emailOk) return "Please enter a valid email address.";
     if (password.length < 6) return "Password must be at least 6 characters.";
@@ -53,7 +51,7 @@ const AuthPage = () => {
       if (isLogin) {
         await loginUser({ email, password });
       } else {
-        await registerUser({ name, email, password, role });
+        await registerUser({ name, email, password });
       }
       navigate(redirectTo, { replace: true });
     } catch (err) {
@@ -111,21 +109,7 @@ const AuthPage = () => {
             </div>
           )}
 
-          {!isLogin && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Role
-              </label>
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-              >
-                <option value="student">Student</option>
-                <option value="mentor">Mentor</option>
-              </select>
-            </div>
-          )}
+          
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">

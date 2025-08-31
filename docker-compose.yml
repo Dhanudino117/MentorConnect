@@ -1,0 +1,13 @@
+services:
+  app:
+    build: .
+    container_name: mentorconnect_container
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb+srv://dinotech117:dinotech117@cluster0.niq1s2h.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      - PORT=5000
+      - JWT_SECRET=MentorConnect
+    volumes:
+      - ./backend:/app/backend
+      - /app/backend/node_modules
